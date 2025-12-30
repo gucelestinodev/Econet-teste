@@ -12,3 +12,7 @@ export async function listUsersByCompany(companyId: number) {
   const res = await api.get('/users', { params: { companyId, _sort: 'id', _order: 'desc' } })
   return res.data as User[]
 }
+
+export async function deleteUser(id: number) {
+  await api.delete(`/users/${id}`)
+}

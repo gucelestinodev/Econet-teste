@@ -52,3 +52,12 @@ export async function getCompany(id: number) {
   const res = await api.get(`/companies/${id}`)
   return res.data as Company
 }
+
+export async function updateCompany(id: number, payload: Partial<Company>) {
+  const res = await api.patch(`/companies/${id}`, payload)
+  return res.data as Company
+}
+
+export async function deleteCompany(id: number) {
+  await api.delete(`/companies/${id}`)
+}
