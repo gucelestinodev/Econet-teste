@@ -187,14 +187,14 @@
       "companyId": 1,
       "name": "Ana Souza",
       "email": "ana@econet.com",
-      "role": "Admin"
+      "role": "Administração"
     },
     {
       "id": "2",
       "companyId": 1,
       "name": "João Lima",
-      "email": "joao@econet.com",
-      "role": "Analista"
+      "email": "joao@econet.br",
+      "role": "Analista de sistemas"
     },
     {
       "id": "3",

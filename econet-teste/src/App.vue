@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import ToastHost from "./components/ui/ToastHost.vue";
+</script>
 
 <template>
   <main class="min-h-screen bg-gray-50">
@@ -12,4 +14,8 @@
       <router-view />
     </div>
   </main>
+
+  <ToastHost />
 </template>
+
+<style scoped></style>
