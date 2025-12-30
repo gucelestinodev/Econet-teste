@@ -1,10 +1,45 @@
 {
   "companies": [
     { "id": 1, "name": "Econet LTDA", "cnpj": "12.345.678/0001-90", "status": "active" },
-    { "id": 2, "name": "Tech BR", "cnpj": "98.765.432/0001-10", "status": "inactive" }
+    { "id": 2, "name": "Tech BR", "cnpj": "98.765.432/0001-10", "status": "inactive" },
+    { "id": 3, "name": "Alpha Systems", "cnpj": "11.111.111/0001-11", "status": "active" },
+    { "id": 4, "name": "Beta Digital", "cnpj": "22.222.222/0001-22", "status": "inactive" },
+    { "id": 5, "name": "Gamma Cloud", "cnpj": "33.333.333/0001-33", "status": "active" },
+    { "id": 6, "name": "Delta Tech", "cnpj": "44.444.444/0001-44", "status": "active" },
+    { "id": 7, "name": "Zeta Labs", "cnpj": "55.555.555/0001-55", "status": "inactive" },
+    { "id": 8, "name": "Aurum Data", "cnpj": "66.666.666/0001-66", "status": "active" },
+    { "id": 9, "name": "Nexa Corp", "cnpj": "77.777.777/0001-77", "status": "inactive" },
+    { "id": 10, "name": "Orion Soft", "cnpj": "88.888.888/0001-88", "status": "active" },
+    { "id": 11, "name": "Pulsar TI", "cnpj": "10.101.010/0001-00", "status": "active" },
+    { "id": 12, "name": "Quasar Dev", "cnpj": "20.202.020/0001-00", "status": "inactive" },
+    { "id": 13, "name": "RocketWare", "cnpj": "30.303.030/0001-00", "status": "active" },
+    { "id": 14, "name": "Saturno Apps", "cnpj": "40.404.040/0001-00", "status": "active" },
+    { "id": 15, "name": "Tessera IO", "cnpj": "50.505.050/0001-00", "status": "inactive" },
+    { "id": 16, "name": "Umbra Tech", "cnpj": "60.606.060/0001-00", "status": "active" },
+    { "id": 17, "name": "Vortex LTDA", "cnpj": "70.707.070/0001-00", "status": "inactive" },
+    { "id": 18, "name": "Wave Digital", "cnpj": "80.808.080/0001-00", "status": "active" },
+    { "id": 19, "name": "X-Node", "cnpj": "90.909.090/0001-00", "status": "active" },
+    { "id": 20, "name": "Yotta Cloud", "cnpj": "91.919.191/0001-00", "status": "inactive" },
+    { "id": 21, "name": "Zenith Dev", "cnpj": "92.929.292/0001-00", "status": "active" },
+    { "id": 22, "name": "Artemis SA", "cnpj": "93.939.393/0001-00", "status": "inactive" },
+    { "id": 23, "name": "Boreal Tech", "cnpj": "94.949.494/0001-00", "status": "active" },
+    { "id": 24, "name": "Cosmo Data", "cnpj": "95.959.595/0001-00", "status": "active" },
+    { "id": 25, "name": "Draco Labs", "cnpj": "96.969.696/0001-00", "status": "inactive" },
+    { "id": 26, "name": "Eclipse TI", "cnpj": "97.979.797/0001-00", "status": "active" },
+    { "id": 27, "name": "Fluxo Tech", "cnpj": "98.989.898/0001-00", "status": "inactive" },
+    { "id": 28, "name": "Gladius Dev", "cnpj": "12.120.120/0001-12", "status": "active" },
+    { "id": 29, "name": "Helios Cloud", "cnpj": "13.130.130/0001-13", "status": "active" },
+    { "id": 30, "name": "Icarus Apps", "cnpj": "14.140.140/0001-14", "status": "inactive" },
+    { "id": 31, "name": "Icarus Apps", "cnpj": "14.140.140/0001-14", "status": "inactive" },
+    { "id": 32, "name": "Icarus Apps", "cnpj": "14.140.140/0001-14", "status": "inactive" }
   ],
   "users": [
     { "id": 1, "companyId": 1, "name": "Ana Souza", "email": "ana@econet.com", "role": "Admin" },
-    { "id": 2, "companyId": 1, "name": "João Lima", "email": "joao@econet.com", "role": "Analista" }
+    { "id": 2, "companyId": 1, "name": "João Lima", "email": "joao@econet.com", "role": "Analista" },
+    { "id": 3, "companyId": 2, "name": "Paula Reis", "email": "paula@techbr.com", "role": "Gestora" },
+    { "id": 4, "companyId": 3, "name": "Rafael Dias", "email": "rafa@alpha.com", "role": "Dev" },
+    { "id": 5, "companyId": 3, "name": "Camila F.", "email": "camila@alpha.com", "role": "QA" },
+    { "id": 6, "companyId": 10, "name": "Bruno K.", "email": "bruno@orion.com", "role": "Dev" },
+    { "id": 7, "companyId": 21, "name": "Lia M.", "email": "lia@zenith.com", "role": "Analista" }
   ]
 }
