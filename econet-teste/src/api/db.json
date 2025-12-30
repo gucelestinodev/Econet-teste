@@ -179,6 +179,12 @@
       "name": "Icarus Apps",
       "cnpj": "14.140.140/0001-14",
       "status": "inactive"
+    },
+    {
+      "id": "9285",
+      "name": "Teste Empresa",
+      "cnpj": "12345678910001",
+      "status": "active"
     }
   ],
   "users": [
@@ -237,6 +243,13 @@
       "name": "Gustavo",
       "email": "teste@gmail.com",
       "role": "Desenvolvedor"
+    },
+    {
+      "id": "8db4",
+      "companyId": 9285,
+      "name": "testefinal",
+      "email": "teste@gmail.com",
+      "role": "RH"
     }
   ]
 }

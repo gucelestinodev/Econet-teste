@@ -61,3 +61,8 @@ export async function updateCompany(id: number, payload: Partial<Company>) {
 export async function deleteCompany(id: number) {
   await api.delete(`/companies/${id}`)
 }
+
+export async function createCompany(payload: Omit<Company, 'id'>) {
+  const res = await api.post('/companies', payload)
+  return res.data as Company
+}

@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { listCompanies, type Company } from '../../api/company.service'
+import { listCompanies, createCompany, type Company } from '../../api/company.service'
+import CompanyFormModal from '../../components/modals/CompanyFormModal.vue'
+import { useToastStore } from '../../stores/toast.store'
 
 const router = useRouter()
+const toast = useToastStore()
 
 const companies = ref<Company[]>([])
 const total = ref(0)
@@ -13,18 +16,17 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const search = ref('')
 
+const showCreate = ref(false)
+const savingCreate = ref(false)
+
 let typingTimer: number | undefined
 watch(search, () => {
   page.value = 1
   if (typingTimer) window.clearTimeout(typingTimer)
-  typingTimer = window.setTimeout(() => {
-    fetchCompanies()
-  }, 300)
+  typingTimer = window.setTimeout(() => { fetchCompanies() }, 300)
 })
 
-watch(page, () => {
-  fetchCompanies()
-})
+watch(page, () => { fetchCompanies() })
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / limit)))
 
@@ -43,15 +45,32 @@ async function fetchCompanies() {
 }
 
 function goDetails(id: number) {
-  console.log('indo p/ detalhes', id)
   router.push({ name: 'company-details', params: { id } })
 }
 
-function prev() {
-  if (page.value > 1) page.value--
+function prev() { if (page.value > 1) page.value-- }
+function next() { if (page.value < totalPages.value) page.value++ }
+
+function openCreateCompany() {
+  showCreate.value = true
 }
-function next() {
-  if (page.value < totalPages.value) page.value++
+function closeCreateCompany() {
+  showCreate.value = false
+}
+
+async function submitCreateCompany(payload: { name: string; cnpj: string; status: 'active' | 'inactive' }) {
+  try {
+    savingCreate.value = true
+    const created = await createCompany(payload)
+    companies.value = [created, ...companies.value]
+    total.value += 1
+    toast.success('Empresa criada com sucesso!')
+    showCreate.value = false
+  } catch (e: any) {
+    toast.error(e?.message ?? 'Falha ao criar empresa')
+  } finally {
+    savingCreate.value = false
+  }
 }
 
 onMounted(fetchCompanies)
@@ -61,12 +80,15 @@ onMounted(fetchCompanies)
   <div class="bg-white rounded-2xl shadow p-6 border border-gray-100">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-lg font-semibold">Empresas</h2>
-      <input
-        v-model="search"
-        type="text"
-        placeholder="Buscar por nome ou CNPJ"
-        class="w-64 rounded-md border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-black focus:ring-0 transition-colors"
-      />
+      <div>
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Buscar por nome ou CNPJ"
+          class="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-black focus:ring-0 transition-colors mr-4"
+        />
+        <button class="btn btn-primary" @click="openCreateCompany">Nova empresa</button>
+      </div>
     </div>
 
     <div v-if="loading" class="py-10 text-center">Carregando…</div>
@@ -119,5 +141,13 @@ onMounted(fetchCompanies)
         </button>
       </div>
     </template>
+
+    <CompanyFormModal
+      :open="showCreate"
+      mode="create"
+      :saving="savingCreate"
+      @close="closeCreateCompany"
+      @submit="submitCreateCompany"
+    />
   </div>
 </template>
