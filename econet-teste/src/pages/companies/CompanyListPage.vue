@@ -116,7 +116,10 @@ onMounted(fetchCompanies)
               <td class="py-2">{{ c.cnpj }}</td>
               <td class="py-2">
                 <span
-                  :class="['badge', c.status === 'active' ? 'badge-green' : 'badge-red']"
+                  :class="[
+                    'badge w-[80px] text-center justify-center',
+                    c.status === 'active' ? 'badge-green' : 'badge-red',
+                  ]"
                 >
                   {{ c.status === "active" ? "Ativa" : "Inativa" }}
                 </span>
