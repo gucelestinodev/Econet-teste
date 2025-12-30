@@ -1,0 +1,10 @@
+{
+  "companies": [
+    { "id": 1, "name": "Econet LTDA", "cnpj": "12.345.678/0001-90", "status": "active" },
+    { "id": 2, "name": "Tech BR", "cnpj": "98.765.432/0001-10", "status": "inactive" }
+  ],
+  "users": [
+    { "id": 1, "companyId": 1, "name": "Ana Souza", "email": "ana@econet.com", "role": "Admin" },
+    { "id": 2, "companyId": 1, "name": "João Lima", "email": "joao@econet.com", "role": "Analista" }
+  ]
+}
