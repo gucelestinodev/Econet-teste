@@ -13,6 +13,16 @@ export async function listUsersByCompany(companyId: number) {
   return res.data as User[]
 }
 
+export async function createUser(payload: Omit<User, 'id'>) {
+  const res = await api.post('/users', payload)
+  return res.data as User
+}
+
+export async function updateUser(id: number, payload: Partial<User>) {
+  const res = await api.patch(`/users/${id}`, payload)
+  return res.data as User
+}
+
 export async function deleteUser(id: number) {
   await api.delete(`/users/${id}`)
 }

@@ -2,10 +2,17 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getCompany, updateCompany, type Company } from '../../api/company.service'
-import { listUsersByCompany, type User } from '../../api/user.service'
+import {
+  listUsersByCompany,
+  createUser,
+  updateUser,
+  deleteUser,
+  type User
+} from '../../api/user.service'
 
 import EditCompanyModal from '../../components/modals/EditCompanyModal.vue'
 import ConfirmDeleteModal from '../../components/modals/ConfirmDeleteModal.vue'
+import UserModal from '../../components/modals/UserModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -18,8 +25,19 @@ const users = ref<User[]>([])
 
 const showEdit = ref(false)
 const saving = ref(false)
+const showDeleteCompany = ref(false)
 
-const showDelete = ref(false)
+const showUserModal = ref(false)
+const userSaving = ref(false)
+const userMode = ref<'create' | 'edit'>('create')
+const editingUserId = ref<number | null>(null)
+const userInitialName = ref('')
+const userInitialEmail = ref('')
+const userInitialRole = ref('')
+
+const showDeleteUser = ref(false)
+const deletingUserId = ref<number | null>(null)
+const deletingUserName = ref('')
 
 async function load() {
   loading.value = true
@@ -34,26 +52,14 @@ async function load() {
   }
 }
 
-function goBack() {
-  router.back()
-}
+function goBack() { router.back() }
 
 function openEdit() {
   if (!company.value) return
   showEdit.value = true
 }
 
-function openDelete() {
-  showDelete.value = true
-}
-
-function closeEdit() {
-  showEdit.value = false
-}
-
-function closeDelete() {
-  showDelete.value = false
-}
+function closeEdit() { showEdit.value = false }
 
 async function submitEdit(payload: { name: string; cnpj: string; status: 'active' | 'inactive' }) {
   if (!company.value) return
@@ -69,20 +75,78 @@ async function submitEdit(payload: { name: string; cnpj: string; status: 'active
   }
 }
 
-function onDeleteSuccess(e: { targetType: 'company' | 'user'; targetId: number }) {
-  showDelete.value = false
-  if (e.targetType === 'company') {
-    router.push('/companies')
+function openDeleteCompany() { showDeleteCompany.value = true }
+function closeDeleteCompany() { showDeleteCompany.value = false }
+function onDeleteSuccessCompany() { router.push('/companies') }
+
+function openAddUser() {
+  userMode.value = 'create'
+  editingUserId.value = null
+  userInitialName.value = ''
+  userInitialEmail.value = ''
+  userInitialRole.value = ''
+  showUserModal.value = true
+}
+
+function openEditUser(u: User) {
+  userMode.value = 'edit'
+  editingUserId.value = u.id ?? null
+  userInitialName.value = u.name
+  userInitialEmail.value = u.email
+  userInitialRole.value = u.role
+  showUserModal.value = true
+}
+
+function closeUserModal() { showUserModal.value = false }
+
+async function submitUser(payload: { name: string; email: string; role: string }) {
+  try {
+    userSaving.value = true
+    if (userMode.value === 'create') {
+      const created = await createUser({
+        companyId: id,
+        name: payload.name,
+        email: payload.email,
+        role: payload.role
+      })
+      users.value = [created, ...users.value]
+    } else if (userMode.value === 'edit' && editingUserId.value != null) {
+      const updated = await updateUser(editingUserId.value, {
+        name: payload.name,
+        email: payload.email,
+        role: payload.role
+      })
+      users.value = users.value.map(u => (u.id === updated.id ? updated : u))
+    }
+    showUserModal.value = false
+  } catch (e: any) {
+    alert(e?.message ?? 'Falha ao salvar usuário')
+  } finally {
+    userSaving.value = false
+  }
+}
+
+function openDeleteUser(u: User) {
+  deletingUserId.value = u.id ?? null
+  deletingUserName.value = u.name
+  showDeleteUser.value = true
+}
+function closeDeleteUser() { showDeleteUser.value = false }
+function onDeleteSuccessUser(e: { targetType: 'company' | 'user'; targetId: number }) {
+  showDeleteUser.value = false
+  if (e.targetType === 'user') {
+    users.value = users.value.filter(u => u.id !== e.targetId)
   }
 }
 
 const initialName = computed(() => company.value?.name ?? '')
 const initialCnpj = computed(() => company.value?.cnpj ?? '')
 const initialStatus = computed<'active' | 'inactive'>(() => company.value?.status ?? 'active')
-const deleteMsg = computed(() =>
-  company.value
-    ? `Tem certeza que deseja excluir a empresa "${company.value.name}"?`
-    : 'Tem certeza?'
+const deleteMsgCompany = computed(() =>
+  company.value ? `Tem certeza que deseja excluir a empresa "${company.value.name}"?` : 'Tem certeza?'
+)
+const deleteMsgUser = computed(() =>
+  deletingUserName.value ? `Tem certeza que deseja excluir o usuário "${deletingUserName.value}"?` : 'Tem certeza?'
 )
 
 onMounted(load)
@@ -109,7 +173,7 @@ onMounted(load)
         <p><strong>CNPJ:</strong> {{ company.cnpj }}</p>
 
         <div class="flex items-center gap-3">
-          <p class="mt-1">
+          <p>
             <strong>Status: </strong>
             <span
               :class="[
@@ -129,7 +193,7 @@ onMounted(load)
               Editar empresa
             </button>
             <button
-              @click="openDelete"
+              @click="openDeleteCompany"
               class="px-3 py-1.5 text-sm rounded-md border border-red-300 text-red-700 hover:bg-red-50 transition-colors focus:outline-none focus:border-red-600"
             >
               Excluir
@@ -142,6 +206,12 @@ onMounted(load)
     <div class="bg-white rounded-2xl shadow p-6 border border-gray-100">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-lg font-semibold">Usuários vinculados</h3>
+        <button
+          @click="openAddUser"
+          class="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-100 transition-colors focus:outline-none focus:border-black"
+        >
+          Adicionar usuário
+        </button>
       </div>
 
       <div v-if="loading">Carregando…</div>
@@ -155,6 +225,7 @@ onMounted(load)
                 <th class="py-2">Nome</th>
                 <th class="py-2">E-mail</th>
                 <th class="py-2">Cargo</th>
+                <th class="py-2 w-40">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -162,9 +233,25 @@ onMounted(load)
                 <td class="py-2">{{ u.name }}</td>
                 <td class="py-2">{{ u.email }}</td>
                 <td class="py-2">{{ u.role }}</td>
+                <td class="py-2">
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="openEditUser(u)"
+                      class="px-2 py-1 text-xs rounded-md border border-gray-300 hover:bg-gray-100 focus:outline-none focus:border-black"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      @click="openDeleteUser(u)"
+                      class="px-2 py-1 text-xs rounded-md border border-red-300 text-red-700 hover:bg-red-50 focus:outline-none focus:border-red-600"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
               </tr>
               <tr v-if="!users.length">
-                <td colspan="3" class="py-4 text-center text-gray-500">Nenhum usuário</td>
+                <td colspan="4" class="py-4 text-center text-gray-500">Nenhum usuário</td>
               </tr>
             </tbody>
           </table>
@@ -174,23 +261,45 @@ onMounted(load)
 
     <EditCompanyModal
       :open="showEdit"
-      :initial-name="initialName"
-      :initial-cnpj="initialCnpj"
-      :initial-status="initialStatus"
+      :initial-name="company?.name || ''"
+      :initial-cnpj="company?.cnpj || ''"
+      :initial-status="company?.status || 'active'"
       :saving="saving"
       @close="closeEdit"
       @submit="submitEdit"
     />
 
     <ConfirmDeleteModal
-      :open="showDelete"
+      :open="showDeleteCompany"
       target-type="company"
       :target-id="id"
       title="Excluir empresa"
-      :message="deleteMsg"
+      :message="deleteMsgCompany"
       confirm-label="Excluir"
-      @close="closeDelete"
-      @success="onDeleteSuccess"
+      @close="closeDeleteCompany"
+      @success="onDeleteSuccessCompany"
+    />
+
+    <UserModal
+      :open="showUserModal"
+      :mode="userMode"
+      :initial-name="userInitialName"
+      :initial-email="userInitialEmail"
+      :initial-role="userInitialRole"
+      :saving="userSaving"
+      @close="closeUserModal"
+      @submit="submitUser"
+    />
+
+    <ConfirmDeleteModal
+      :open="showDeleteUser"
+      target-type="user"
+      :target-id="deletingUserId || 0"
+      title="Excluir usuário"
+      :message="deleteMsgUser"
+      confirm-label="Excluir"
+      @close="closeDeleteUser"
+      @success="onDeleteSuccessUser"
     />
   </div>
 </template>

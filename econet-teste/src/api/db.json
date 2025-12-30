@@ -81,7 +81,7 @@
     {
       "id": "14",
       "name": "Saturno Apps",
-      "cnpj": "40.404.040/0001-00",
+      "cnpj": "40.404.040/0001-01",
       "status": "inactive"
     },
     {
@@ -230,6 +230,13 @@
       "name": "Lia M.",
       "email": "lia@zenith.com",
       "role": "Analista"
+    },
+    {
+      "id": "ba7c",
+      "companyId": 14,
+      "name": "Gustavo",
+      "email": "teste@gmail.com",
+      "role": "Desenvolvedor"
     }
   ]
 }
